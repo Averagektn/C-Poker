@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.096,C:\Archive\3 semester\Coursework\Poker\Unit1.dfm=C:\Archive\3 semester\Coursework\Poker\Combinations.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.842,C:\Archive\3 semester\Coursework\Poker\Auxiliary.h=C:\Archive\3 semester\Coursework\Poker\Interface.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.096,C:\Archive\3 semester\Coursework\Poker\Unit1.h=C:\Archive\3 semester\Coursework\Poker\Combinations.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.442,C:\Archive\3 semester\Coursework\Poker\Unit1.h=C:\Archive\3 semester\Coursework\Poker\MainMenu.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.180,=C:\Archive\3 semester\Coursework\Poker\Unit1.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.442,C:\Archive\3 semester\Coursework\Poker\Unit1.dfm=C:\Archive\3 semester\Coursework\Poker\MainMenu.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.734,=C:\Archive\3 semester\Coursework\Poker\Interface.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.259,C:\Archive\3 semester\Coursework\Poker\pokerWnd.cpp=C:\Archive\3 semester\Coursework\Poker\Unit1.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.138,C:\Archive\3 semester\Coursework\Poker\Info.cpp=C:\Archive\3 semester\Coursework\Poker\Unit1.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.997,=C:\Archive\3 semester\Coursework\Poker\Project1PCH1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.138,C:\Archive\3 semester\Coursework\Poker\Info.h=C:\Archive\3 semester\Coursework\Poker\Unit1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.706,=C:\Archive\3 semester\Coursework\Poker\Unit1.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.004,C:\Archive\3 semester\Coursework\Poker\PokerPCH1.h=C:\Archive\3 semester\Coursework\Poker\Project1PCH1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.259,C:\Archive\3 semester\Coursework\Poker\pokerWnd.dfm=C:\Archive\3 semester\Coursework\Poker\Unit1.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.059,C:\Archive\3 semester\Coursework\Poker\Poker.cbproj=C:\Archive\3 semester\Coursework\Poker\Project1.cbproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.867,C:\Archive\3 semester\Coursework\Poker\Poker.cbproj=C:\Archive\3 semester\Coursework\Poker\Poker.cbproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.259,C:\Archive\3 semester\Coursework\Poker\pokerWnd.h=C:\Archive\3 semester\Coursework\Poker\Unit1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.138,C:\Archive\3 semester\Coursework\Poker\Info.dfm=C:\Archive\3 semester\Coursework\Poker\Unit1.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.153,=C:\Archive\3 semester\Coursework\Poker\Unit1.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.479,=C:\Archive\3 semester\Coursework\Poker\Unit1.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.124,=C:\Archive\3 semester\Coursework\Poker\Unit1.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.442,C:\Archive\3 semester\Coursework\Poker\Unit1.cpp=C:\Archive\3 semester\Coursework\Poker\MainMenu.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.096,C:\Archive\3 semester\Coursework\Poker\Unit1.cpp=C:\Archive\3 semester\Coursework\Poker\Combinations.cpp</Transaction>
+  </Transactions>
+	<BT_BuildType>AppStore</BT_BuildType>
+</BorlandProject>

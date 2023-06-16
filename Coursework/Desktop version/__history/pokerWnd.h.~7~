@@ -1,0 +1,97 @@
+//---------------------------------------------------------------------------
+
+#ifndef pokerWndH
+#define pokerWndH
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include <Vcl.Forms.hpp>
+#include <Vcl.ExtCtrls.hpp>
+#include <Vcl.Graphics.hpp>
+#include <Vcl.ComCtrls.hpp>
+#include <Interface.h>
+//---------------------------------------------------------------------------
+class TMainForm : public TForm
+{
+__published:	// IDE-managed Components
+	TImage *imgBackground;
+	TButton *btnBet;
+	TImage *imgPlrCrd_1;
+	TTrackBar *tbarBet;
+	TButton *btnCall;
+	TButton *btnCheck;
+	TButton *btnFold;
+	TLabel *lblBet;
+	TImage *imgPlrCrd_2;
+	TImage *imgComp_1_Crd_2;
+	TImage *imgComp_1_Crd_1;
+	TImage *imgComp_2_Crd_2;
+	TImage *imgComp_2_Crd_1;
+	TImage *imgComp_4_Crd_1;
+	TImage *imgComp_4_Crd_2;
+	TImage *imgComp_3_Crd_2;
+	TImage *imgComp_3_Crd_1;
+	TImage *imgTblCrd_1;
+	TImage *imgTblCrd_2;
+	TImage *imgTblCrd_3;
+	TImage *imgTblCrd_4;
+	TImage *imgTblCrd_5;
+	TLabel *lblComp_3;
+	TLabel *lblComp_4;
+	TLabel *lblComp_2_Balance;
+	TLabel *lblComp_2;
+	TLabel *lblComp_1;
+	TLabel *lblComp_2_Bet;
+	TLabel *lblComp_1_Bet;
+	TLabel *lblComp_3_Bet;
+	TLabel *lblComp_4_Bet;
+	TLabel *lblPlrCmb;
+	TLabel *lblComp_1_Balance;
+	TLabel *lblComp_4_Balance;
+	TLabel *lblComp_3_Balance;
+	TLabel *lblPlrBalance;
+	TLabel *lblTblBank;
+	TLabel *lblPlrBet;
+	void __fastcall btnBetClick(TObject *Sender);
+	void __fastcall tbarBetTracking(TObject *Sender);
+	void __fastcall imgPlrCrd_2MouseEnter(TObject *Sender);
+	void __fastcall imgPlrCrd_2MouseLeave(TObject *Sender);
+	void __fastcall imgPlrCrd_1MouseEnter(TObject *Sender);
+	void __fastcall imgPlrCrd_1MouseLeave(TObject *Sender);
+	void __fastcall btnFoldClick(TObject *Sender);
+	void __fastcall btnCallClick(TObject *Sender);
+	void __fastcall btnCheckClick(TObject *Sender);
+	void __fastcall FormCreate(TObject *Sender);
+
+private:	// User declarations
+public:		// User declarations
+	  TBitmap* BMPS[DECK_SIZE];
+	  TLabel* lblBets[PLAYERS];
+	  TLabel* lblBalances[PLAYERS];
+	  TImage* imgTableCards[TABLE_CARDS];
+	  TImage* imgPlayerCards[PLAYERS * 2];
+	  Player players[PLAYERS];
+	  Table table;
+
+	__fastcall TMainForm(TComponent* Owner);
+
+	const char* deckBMP[DECK_SIZE] =
+	{"src\\2_clubs.bmp",   "src\\3_clubs.bmp",     "src\\4_clubs.bmp",    "src\\5_clubs.bmp",
+	"src\\6_clubs.bmp",    "src\\7_clubs.bmp",     "src\\8_clubs.bmp",    "src\\9_clubs.bmp",
+	"src\\10_clubs.bmp",   "src\\J_clubs.bmp",     "src\\Q_clubs.bmp",    "src\\K_clubs.bmp",
+	"src\\A_clubs.bmp",    "src\\2_diamonds.bmp",  "src\\3_diamonds.bmp", "src\\4_diamonds.bmp",
+	"src\\5_diamonds.bmp", "src\\6_diamonds.bmp",  "src\\7_diamonds.bmp", "src\\8_diamonds.bmp",
+	"src\\9_diamonds.bmp", "src\\10_diamonds.bmp", "src\\J_diamonds.bmp", "src\\Q_diamonds.bmp",
+	"src\\K_diamonds.bmp", "src\\A_diamonds.bmp",  "src\\2_hearts.bmp",   "src\\3_hearts.bmp",
+	"src\\4_hearts.bmp",   "src\\5_hearts.bmp",    "src\\6_hearts.bmp",   "src\\7_hearts.bmp",
+	"src\\8_hearts.bmp",   "src\\9_hearts.bmp",    "src\\10_hearts.bmp",  "src\\J_hearts.bmp",
+	"src\\Q_hearts.bmp",   "src\\K_hearts.bmp",    "src\\A_hearts.bmp",   "src\\2_spades.bmp",
+	"src\\3_spades.bmp",   "src\\4_spades.bmp",    "src\\5_spades.bmp",   "src\\6_spades.bmp",
+	"src\\7_spades.bmp",   "src\\8_spades.bmp",    "src\\9_spades.bmp",   "src\\10_spades.bmp",
+	"src\\J_spades.bmp",   "src\\Q_spades.bmp",    "src\\K_spades.bmp",   "src\\A_spades.bmp" };
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TMainForm *MainForm;
+//---------------------------------------------------------------------------
+#endif

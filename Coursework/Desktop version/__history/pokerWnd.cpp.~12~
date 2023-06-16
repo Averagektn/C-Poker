@@ -1,0 +1,405 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "pokerWnd.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.dfm"
+
+#define SLEEP_TIME 900
+
+TMainForm *MainForm;
+
+void resetDeck(){
+	for (int i = 0; i < DECK_SIZE; i++) {
+			deck[i].value = i % VALUES;
+			deck[i].suit = i / VALUES;
+	}
+}
+
+ void processCardsNum(Table *table, Player players[], TImage* *imagesTable, TImage* *imagesPlayer, TImageList* imgList){
+	int winnerId, ind;
+
+		switch(table->cardsNum){
+		case PREFLOP_CARDS:
+			for (int i = 0; i < FLOP_CARDS; i++) {
+				Application->ProcessMessages();
+				Sleep(SLEEP_TIME);
+				imagesTable[i]->Picture->Bitmap = NULL;
+				ind = table->layout[i].suit * VALUES + table->layout[i].value;
+				imgList->GetBitmap(ind, imagesTable[i]->Picture->Bitmap);
+			}
+			table->cardsNum = FLOP_CARDS;
+			break;
+		case FLOP_CARDS:
+            Application->ProcessMessages();
+			Sleep(SLEEP_TIME);
+			imagesTable[TURN_CARD]->Picture->Bitmap = NULL;
+			ind = table->layout[TURN_CARD].suit * VALUES + table->layout[TURN_CARD].value;
+			imgList->GetBitmap(ind, imagesTable[TURN_CARD]->Picture->Bitmap);
+			table->cardsNum = TURN_CARDS;
+			break;
+		case TURN_CARDS:
+            Application->ProcessMessages();
+			Sleep(SLEEP_TIME);
+			imagesTable[RIVER_CARD]->Picture->Bitmap = NULL;
+			ind = table->layout[RIVER_CARD].suit * VALUES + table->layout[RIVER_CARD].value;
+			imgList->GetBitmap(ind, imagesTable[RIVER_CARD]->Picture->Bitmap);
+			table->cardsNum = RIVER_CARDS;
+			break;
+		case RIVER_CARDS:
+			for (int i = 1; i < PLAYERS; i++) {
+                Application->ProcessMessages();
+				Sleep(SLEEP_TIME);
+				imagesPlayer[i * 2]->Picture->Bitmap = NULL;
+				ind = players[i].layout[FIRST_CARD].suit * VALUES + players[i].layout[FIRST_CARD].value;
+				imgList->GetBitmap(ind, imagesPlayer[i * 2]->Picture->Bitmap);
+
+				Application->ProcessMessages();
+				Sleep(SLEEP_TIME);
+				imagesPlayer[i * 2 + 1]->Picture->Bitmap = NULL;
+				ind = players[i].layout[SECOND_CARD].suit * VALUES + players[i].layout[SECOND_CARD].value;
+				imgList->GetBitmap(ind, imagesPlayer[i * 2 + 1]->Picture->Bitmap);
+			}
+            Application->ProcessMessages();
+			Sleep(SLEEP_TIME);
+			winnerId = findWinner(players, *table, PLAYERS);
+			Application->MessageBox(L"Somebody wins", L"Game is over", MB_OK);
+			break;
+		default:
+			break;
+	}
+ }
+
+void updateComputerInfo(Player *plr, Table *tbl, TLabel* lblBet, TLabel* lblBalance, int (*strat)(Player*, Table*, int)){
+	int strategy, tmp;
+
+	strategy = strat(plr, tbl, tbl->cardsNum);
+
+	switch (strategy) {
+	case OUT_OF_GAME:
+		lblBet->Caption = "IS OUT";
+		break;
+	case FOLD:
+		fold(plr);
+		lblBet->Caption = "FOLD";
+		break;
+	 case CALL:
+		if (plr->balance + plr->bet < tbl->call) {
+			fold(plr);
+			lblBet->Caption = "FOLD";
+		}
+		tmp = tbl->call - plr->bet;
+		if (tmp) {
+		  call(plr, tbl);
+		  lblBet->Caption = "CALL ";
+		  lblBet->Caption += tmp;
+		}
+		else {
+			lblBet->Caption = "CHECK";
+		}
+		break;
+	 case CHECK:
+		if (tbl->call - plr->bet) {
+			fold(plr);
+			lblBet->Caption = "FOLD";
+		}
+		else {
+			lblBet->Caption = "CHECK";
+		}
+		break;
+	  case BET:
+		if (plr->balance + plr->bet <= tbl->call) {
+			allIn(plr, tbl);
+			lblBet->Caption = "ALL IN";
+		} else if (plr->bet + plr->balance != tbl->call) {
+			tmp = bet(plr, tbl);
+			lblBet->Caption = "BET ";
+			lblBet->Caption += tmp;
+		}
+		else {
+			lblBet->Caption = "CHECK";
+		}
+
+		break;
+	  case ALL_IN:
+		lblBet->Caption = "ALL IN";
+		break;
+	default:
+		break;
+	}
+	lblBalance->Caption = "Balance: ";
+	lblBalance->Caption += plr->balance;
+
+}
+
+//---------------------------------------------------------------------------
+__fastcall TMainForm::TMainForm(TComponent* Owner) : TForm(Owner) {
+	srand(time(NULL) / 2);
+	initBalance(players);
+
+	lblBalances[PLAYER] = lblPlrBalance;
+	lblBalances[1] = lblComp_1_Balance;
+	lblBalances[2] = lblComp_2_Balance;
+	lblBalances[3] = lblComp_3_Balance;
+	lblBalances[4] = lblComp_4_Balance;
+
+	lblBets[PLAYER] = lblPlrBet;
+	lblBets[1] = lblComp_1_Bet;
+	lblBets[2] = lblComp_2_Bet;
+	lblBets[3] = lblComp_3_Bet;
+	lblBets[4] = lblComp_4_Bet;
+
+	imgTableCards[0] = imgTblCrd_1;
+	imgTableCards[1] = imgTblCrd_2;
+	imgTableCards[2] = imgTblCrd_3;
+	imgTableCards[3] = imgTblCrd_4;
+	imgTableCards[4] = imgTblCrd_5;
+
+	imgPlayerCards[0] = imgPlrCrd_1;
+	imgPlayerCards[1] = imgPlrCrd_2;
+	imgPlayerCards[2] = imgComp_1_Crd_1;
+	imgPlayerCards[3] = imgComp_1_Crd_2;
+	imgPlayerCards[4] = imgComp_2_Crd_1;
+	imgPlayerCards[5] = imgComp_2_Crd_2;
+	imgPlayerCards[6] = imgComp_3_Crd_1;
+	imgPlayerCards[7] = imgComp_3_Crd_2;
+	imgPlayerCards[8] = imgComp_4_Crd_1;
+	imgPlayerCards[9] = imgComp_4_Crd_2;
+}
+
+//---------------------------------------------------------------------------
+void __fastcall TMainForm::btnBetClick(TObject *Sender) {
+	int stake = tbarBet->Position;
+
+	tbarBet->Enabled = False;
+	btnBet->Enabled = False;
+	btnCall->Enabled = False;
+	btnCheck->Enabled = False;
+
+	playersTurn(&players[PLAYER], &table, table.cardsNum, stake);
+
+	lblPlrBalance->Caption = "Your balance: ";
+	lblPlrBalance->Caption += players[PLAYER].balance;
+	lblBets[PLAYER]->Caption = "Your bet: ";
+	lblBets[PLAYER]->Caption += stake;
+
+	tbarBet->Position = 0;
+	tbarBet->Max = players[PLAYER].balance;
+
+	lblBet->Caption = tbarBet->Position;
+
+	for (int i = 1; i < PLAYERS; i++) {
+		Application->ProcessMessages ();
+		Sleep(SLEEP_TIME);
+		updateComputerInfo(&players[i], &table, lblBets[i], lblBalances[i], chooseStrategy);
+	}
+
+	lblTblBank->Caption = "Bank: ";
+	lblTblBank->Caption += table.atStake;
+
+	if (table.call > players[PLAYER].bet) {
+		if (table.call < players[PLAYER].bet + players[PLAYER].balance) {
+			btnCall->Enabled = True;
+		} else{
+
+		}
+	} else {
+		tbarBet->Enabled = True;
+		btnBet->Enabled = True;
+		btnCheck->Enabled = True;
+
+		processCardsNum(&table, players, imgTableCards, imgPlayerCards, imgList);
+
+		lblPlrCmb->Caption = "Your combination: ";
+		lblPlrCmb->Caption += combinations[findCombinations(table.layout, &players[PLAYER], table.cardsNum)];
+
+	}
+}
+//---------------------------------------------------------------------------
+void __fastcall TMainForm::tbarBetTracking(TObject *Sender)
+{
+	lblBet->Caption = tbarBet->Position;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::imgPlrCrd_2MouseEnter(TObject *Sender)
+{
+	imgPlrCrd_2->Top -= PICTURE_SHIFT;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::imgPlrCrd_2MouseLeave(TObject *Sender)
+{
+	imgPlrCrd_2->Top += PICTURE_SHIFT;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::imgPlrCrd_1MouseEnter(TObject *Sender)
+{
+	imgPlrCrd_1->Top -= PICTURE_SHIFT;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::imgPlrCrd_1MouseLeave(TObject *Sender)
+{
+	imgPlrCrd_1->Top += PICTURE_SHIFT;
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TMainForm::btnFoldClick(TObject *Sender)
+{
+	int winnerId, ind;
+
+	if (table.cardsNum == PREFLOP_CARDS) {
+		computersTurn(players, &table, PLAYERS, table.cardsNum, chooseStrategy);
+		computersTurn(players, &table, PLAYERS, table.cardsNum, callAfterBets);
+		table.cardsNum = FLOP_CARDS;
+	}
+
+	if (table.cardsNum == FLOP_CARDS) {
+		computersTurn(players, &table, PLAYERS, table.cardsNum, chooseStrategy);
+		computersTurn(players, &table, PLAYERS, table.cardsNum, callAfterBets);
+		table.cardsNum = TURN_CARDS;
+	}
+
+	if (table.cardsNum == TURN_CARDS) {
+		computersTurn(players, &table, PLAYERS, table.cardsNum, chooseStrategy);
+		computersTurn(players, &table, PLAYERS, table.cardsNum, callAfterBets);
+		table.cardsNum = RIVER_CARDS;
+	}
+
+	if (table.cardsNum == RIVER_CARDS) {
+		computersTurn(players, &table, PLAYERS, table.cardsNum, chooseStrategy);
+		computersTurn(players, &table, PLAYERS, table.cardsNum, callAfterBets);
+		for (int i = 1; i < PLAYERS; i++) {
+			Application->ProcessMessages();
+			Sleep(SLEEP_TIME);
+			imgPlayerCards[i * 2]->Picture->Bitmap = NULL;
+			ind = players[i].layout[FIRST_CARD].suit * VALUES + players[i].layout[FIRST_CARD].value;
+			imgList->GetBitmap(ind, imgPlayerCards[i * 2]->Picture->Bitmap);
+
+			Application->ProcessMessages();
+			Sleep(SLEEP_TIME);
+			imgPlayerCards[i * 2 + 1]->Picture->Bitmap = NULL;
+			ind = players[i].layout[SECOND_CARD].suit * VALUES + players[i].layout[SECOND_CARD].value;
+			imgList->GetBitmap(ind, imgPlayerCards[i * 2 + 1]->Picture->Bitmap);
+
+		}
+		for (int i = 0; i < TABLE_CARDS; i++) {
+            Application->ProcessMessages();
+			Sleep(SLEEP_TIME);
+			imgTableCards[i]->Picture->Bitmap = NULL;
+			ind = table.layout[i].suit * VALUES + table.layout[i].value;
+			imgList->GetBitmap(ind, imgTableCards[i]->Picture->Bitmap);
+		}
+	}
+
+    Application->ProcessMessages();
+	Sleep(SLEEP_TIME);
+	winnerId = findWinner(players, table, PLAYERS);
+	Application->MessageBox(L"Somebody won", L"Game is over", MB_OK);
+	FormCreate(Sender);
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TMainForm::btnCallClick(TObject *Sender)
+{
+	int stake = table.call - players[PLAYER].bet;
+
+	tbarBet->Enabled = True;
+	btnCall->Enabled = False;
+	btnBet->Enabled = True;
+	btnCheck->Enabled = True;
+
+	playersTurn(&players[PLAYER], &table, table.cardsNum, stake);
+
+	lblPlrBalance->Caption = "Your balance: ";
+	lblPlrBalance->Caption += players[PLAYER].balance;
+	lblBets[PLAYER]->Caption = "Your bet: ";
+	lblBets[PLAYER]->Caption += stake;
+
+	tbarBet->Max = players[PLAYER].balance;
+
+	for (int i = 1; i < PLAYERS; i++) {
+        Application->ProcessMessages();
+		Sleep(SLEEP_TIME);
+		updateComputerInfo(&players[i], &table, lblBets[i], lblBalances[i], callAfterBets);
+	}
+
+	lblTblBank->Caption = "Bank: ";
+	lblTblBank->Caption += table.atStake;
+
+	processCardsNum(&table, players, imgTableCards, imgPlayerCards, imgList);
+
+	lblPlrCmb->Caption = "Your combination: ";
+	lblPlrCmb->Caption += combinations[findCombinations(table.layout, &players[PLAYER], table.cardsNum)];
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::btnCheckClick(TObject *Sender) {
+	tbarBet->Position = 0;
+	lblBet->Caption = tbarBet->Position;
+	btnBetClick(Sender);
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TMainForm::FormCreate(TObject *Sender) {
+	int ind;
+
+	resetDeck();
+
+	tbarBet->Max = players[PLAYER].balance;
+	tbarBet->Position = 0;
+
+	lblBet->Caption = "0";
+
+	btnCall->Enabled = False;
+
+	initializePlayers(players);
+	cardsDealing(players, PLAYERS);
+	clearTable(&table);
+	flop(&table);
+	turn(&table);
+	river(&table);
+
+	for (int i = 0; i < TABLE_CARDS; i++) {
+		imgTableCards[i]->Picture->Bitmap = NULL;
+	}
+
+	for (int i = 0; i < PLAYERS * 2; i++) {
+		imgPlayerCards[i]->Picture->Bitmap = NULL;
+	}
+
+	for (int i = 0; i < TABLE_CARDS; i++) {
+		imgList->GetBitmap(CARD_BACK, imgTableCards[i]->Picture->Bitmap);
+	}
+
+	ind = players[PLAYER].layout[FIRST_CARD].suit * VALUES + players[PLAYER].layout[FIRST_CARD].value;
+	imgList->GetBitmap(ind, imgPlayerCards[FIRST_CARD]->Picture->Bitmap);
+	ind = players[PLAYER].layout[SECOND_CARD].suit * VALUES + players[PLAYER].layout[SECOND_CARD].value;
+	imgList->GetBitmap(ind, imgPlayerCards[SECOND_CARD]->Picture->Bitmap);
+
+	for (int i = 2; i < PLAYERS * 2; i++) {
+		imgList->GetBitmap(CARD_BACK, imgPlayerCards[i]->Picture->Bitmap);
+	}
+
+	for (int i = 0; i < PLAYERS; i++) {
+		lblBalances[i]->Caption = "Balance: ";
+		lblBalances[i]->Caption += players[i].balance;
+		lblBets[i]->Caption = "";
+	}
+
+	lblBets[PLAYER]->Caption = "Bet: 0";
+
+	lblTblBank->Caption = "Bank: 0";
+
+	lblPlrCmb->Caption = "Your combination: ";
+	lblPlrCmb->Caption += combinations[findCombinations(table.layout, &players[PLAYER], table.cardsNum)];
+	}
+//---------------------------------------------------------------------------
+

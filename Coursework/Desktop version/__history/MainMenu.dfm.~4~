@@ -1,0 +1,65 @@
+object StartMenu: TStartMenu
+  Left = 715
+  Top = 312
+  Caption = 'Poker'
+  ClientHeight = 441
+  ClientWidth = 624
+  Color = clBtnFace
+  DoubleBuffered = True
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -12
+  Font.Name = 'Segoe UI'
+  Font.Style = []
+  Position = poDesigned
+  Visible = True
+  TextHeight = 15
+  object Image1: TImage
+    Left = 0
+    Top = 0
+    Width = 624
+    Height = 441
+    Align = alClient
+    Stretch = True
+    ExplicitLeft = 104
+    ExplicitTop = 112
+    ExplicitWidth = 145
+    ExplicitHeight = 297
+  end
+  object btnStart: TButton
+    Left = 240
+    Top = 184
+    Width = 137
+    Height = 49
+    Caption = 'Start'
+    TabOrder = 0
+    OnClick = btnStartClick
+  end
+  object btnInfo: TButton
+    Left = 240
+    Top = 248
+    Width = 137
+    Height = 49
+    Caption = 'About'
+    Enabled = False
+    TabOrder = 1
+  end
+  object btnCombinations: TButton
+    Left = 240
+    Top = 312
+    Width = 137
+    Height = 49
+    Caption = 'Combinations'
+    TabOrder = 2
+    OnClick = btnCombinationsClick
+  end
+  object btnExit: TButton
+    Left = 240
+    Top = 377
+    Width = 137
+    Height = 49
+    Caption = 'Exit'
+    TabOrder = 3
+    OnClick = btnExitClick
+  end
+end
