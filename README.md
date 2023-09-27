@@ -1,2 +1,2 @@
 # C-Poker
-Poker writeen in C language
+Poker written in C language
